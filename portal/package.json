@@ -1,0 +1,13 @@
+{
+  "name": "mock-customer-portal",
+  "version": "1.0.0",
+  "description": "Mock Customer Questionnaire Portal for Autonomous Operator",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2"
+  }
+}
