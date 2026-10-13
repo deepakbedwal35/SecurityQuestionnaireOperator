@@ -247,6 +247,16 @@ elif pending.kind == ApprovalKind.FINAL_SIGNOFF:
         else:
             st.caption(f"Filled file planned at: `{review_path}`")
 
+    # Email Draft Preview (for email delivery runs)
+    if state.artifacts.get("email_draft_to"):
+        with st.container(border=True):
+            st.markdown("### ✉️ Outgoing Email Draft Preview")
+            st.markdown(f"**Recipient (To):** `{state.artifacts.get('email_draft_to')}`")
+            st.markdown(f"**Subject:** `{state.artifacts.get('email_draft_subject')}`")
+            st.markdown(f"**Attachment:** `{state.artifacts.get('email_draft_attachment')}` (Hash: `{state.artifacts.get('email_draft_hash', '')[:16]}...`)")
+            st.caption("Clean customer-facing text (internal scores, flags, and reasons stripped):")
+            st.code(state.artifacts.get("email_draft_body", ""), language="text")
+
     # Preview table
     st.write("### Answers Preview")
     if signoff_vm.preview_answers:

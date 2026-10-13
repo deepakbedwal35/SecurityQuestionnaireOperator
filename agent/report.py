@@ -7,7 +7,7 @@ Produces:
 import hashlib
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from agent.state import AnswerDecision, InjectionFlag, PostconditionResult, RunState
 
 
@@ -39,8 +39,10 @@ def dedupe_postcondition_results(results: List[PostconditionResult]) -> List[Pos
     return list(latest_map.values())
 
 
-def generate_reports(state: RunState, artifacts_dir: str = "artifacts") -> Dict[str, str]:
-    run_dir = os.path.join(artifacts_dir, state.run_id)
+def generate_reports(state: RunState, artifacts_dir: Optional[str] = None) -> Dict[str, str]:
+    from agent.config import get_artifacts_dir
+    target_artifacts_dir = artifacts_dir or get_artifacts_dir()
+    run_dir = os.path.join(target_artifacts_dir, state.run_id)
     os.makedirs(run_dir, exist_ok=True)
 
     evidence_json_path = os.path.join(run_dir, "evidence.json")

@@ -1,0 +1,23 @@
+Subject: Acme Questionnaire PDF only
+From: charlie@acme.com
+To: security-reviews@northwind.com
+Date: Tue, 13 Oct 2026 16:46:26 +0000
+Message-ID: <acme-non-xlsx@acme.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============2040929436378664133=="
+
+--===============2040929436378664133==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+We only have our questionnaire as an executable or PDF.
+
+--===============2040929436378664133==
+Content-Type: application/pdf
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Acme_Questionnaire.pdf"
+MIME-Version: 1.0
+
+JVBERi0xLjQgZHVtbXkgcGRmIGJ5dGVz
+
+--===============2040929436378664133==--

@@ -1,1 +1,1 @@
-{"cookies": [], "origins": []}
+{"cookies": [{"name": "portal_session", "value": "662cf68ac51af9a0a92f67ffbc7f417d513f782f42099307", "domain": "127.0.0.1", "path": "/", "expires": -1, "httpOnly": true, "secure": false, "sameSite": "Lax"}], "origins": []}

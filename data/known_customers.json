@@ -1,0 +1,7 @@
+{
+  "acme": ["acme.com"],
+  "globex": ["globex.com"],
+  "initech": ["initech.com"],
+  "umbrella": ["umbrella.corp", "umbrella.com"]
+}
+

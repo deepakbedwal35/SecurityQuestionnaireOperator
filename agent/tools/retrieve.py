@@ -55,64 +55,94 @@ class QueryDocsAIAdapter(Retriever):
 
 class KeywordPolicyRetriever(Retriever):
     """
-    Local chunking & keyword-matching retriever across policy documents in data/policies/.
-    Respects document versions and authoritativeness (e.g., v2 supersedes v1).
+    Local chunking & keyword-matching retriever across policy documents in Knowledge Base (data/kb)
+    and fallback policies in data/policies/.
+    Respects document versions and authoritativeness (e.g. newer effective_date supersedes older).
     """
-    def __init__(self, policies_dir: str = "data/policies", feedback_store: Optional[FeedbackStore] = None) -> None:
-        self.policies_dir = policies_dir
+    def __init__(
+        self,
+        policies_dir: Optional[str] = None,
+        feedback_store: Optional[FeedbackStore] = None,
+        kb_dir: Optional[str] = None,
+    ) -> None:
+        from agent.config import get_kb_dir, get_policies_dir
+        self.policies_dir = policies_dir or get_policies_dir()
+        self.kb_dir = kb_dir or get_kb_dir()
         self.feedback_store = feedback_store or FeedbackStore()
         self.chunks: List[Dict[str, Any]] = []
         self._load_and_chunk()
 
     def _load_and_chunk(self) -> None:
-        policy_files = glob.glob(os.path.join(self.policies_dir, "*.md"))
-        for pfile in policy_files:
-            filename = os.path.basename(pfile)
-            is_obsolete = "obsolete" in filename.lower()
-            try:
-                with open(pfile, "r", encoding="utf-8") as f:
-                    content = f.read()
-            except Exception:
-                continue
-
-            # Split by section headers (## )
-            sections = content.split("## ")
-            for idx, sec in enumerate(sections):
-                text = sec.strip()
-                if not text:
-                    continue
-                # Weight score downward if document is marked obsolete
-                weight = 0.2 if is_obsolete else 1.0
+        from agent.kb import get_kb_service
+        kb = get_kb_service(self.kb_dir)
+        kb_chunks = kb.get_all_chunks()
+        if kb_chunks:
+            for c in kb_chunks:
                 self.chunks.append({
-                    "doc": filename,
-                    "chunk_id": f"{filename}#sec_{idx}",
-                    "content": text,
-                    "weight": weight,
+                    "doc": c.get("doc_name", "policy"),
+                    "chunk_id": c.get("chunk_id", ""),
+                    "content": c.get("content", ""),
+                    "weight": c.get("weight", 1.0),
+                    "version": c.get("version", ""),
+                    "effective_date": c.get("effective_date", "1970-01-01"),
                 })
+            return
+
+        # Fallback to loading files from policies_dir if KB empty
+        if os.path.exists(self.policies_dir):
+            policy_files = glob.glob(os.path.join(self.policies_dir, "*.md"))
+            for pfile in policy_files:
+                filename = os.path.basename(pfile)
+                is_obsolete = "obsolete" in filename.lower()
+                try:
+                    with open(pfile, "r", encoding="utf-8") as f:
+                        content = f.read()
+                except Exception:
+                    continue
+
+                sections = content.split("## ")
+                for idx, sec in enumerate(sections):
+                    text = sec.strip()
+                    if not text:
+                        continue
+                    weight = 0.2 if is_obsolete else 1.0
+                    self.chunks.append({
+                        "doc": filename,
+                        "chunk_id": f"{filename}#sec_{idx}",
+                        "content": text,
+                        "weight": weight,
+                        "version": "1.0",
+                        "effective_date": "2022-01-01" if is_obsolete else "2024-01-01",
+                    })
 
     def retrieve(self, query: str, top_k: int = 5) -> List[RetrievalResult]:
         query_words = set(re.findall(r"\w+", query.lower()))
-        # Remove common stop words
         stopwords = {"what", "is", "the", "are", "do", "you", "does", "your", "for", "in", "and", "to", "how", "our", "we"}
         filtered_query = [w for w in query_words if len(w) > 2 and w not in stopwords]
 
-        scored: List[tuple[float, Dict[str, Any]]] = []
+        scored: List[tuple[float, str, Dict[str, Any]]] = []
         for chunk in self.chunks:
             c_text = chunk["content"].lower()
             match_count = sum(1 for w in filtered_query if w in c_text)
             if match_count > 0:
                 score = (match_count / max(1, len(filtered_query))) * chunk["weight"]
-                scored.append((score, chunk))
+                eff_date = chunk.get("effective_date", "1970-01-01")
+                scored.append((score, eff_date, chunk))
 
-        scored.sort(key=lambda x: x[0], reverse=True)
+        # Sort primarily by score, and secondarily by effective_date (latest first)
+        scored.sort(key=lambda x: (x[0], x[1]), reverse=True)
         results: List[RetrievalResult] = []
-        for score, chunk in scored[:top_k]:
+        for score, eff_date, chunk in scored[:top_k]:
             results.append(RetrievalResult(
                 doc_id=chunk["doc"],
                 chunk_id=chunk["chunk_id"],
                 content=chunk["content"],
                 score=round(score, 3),
-                metadata={"weight": chunk["weight"]},
+                metadata={
+                    "weight": chunk["weight"],
+                    "version": chunk.get("version"),
+                    "effective_date": eff_date,
+                },
             ))
         return results
 

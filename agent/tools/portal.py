@@ -261,6 +261,15 @@ class PortalSnapshotTool(Tool):
                         label = el.getAttribute('name');
                     }
 
+                    let options = [];
+                    if (el.tagName.toLowerCase() === 'select') {
+                        Array.from(el.options).forEach(opt => {
+                            if (opt.value || opt.text) {
+                                options.push({ value: opt.value, text: opt.text });
+                            }
+                        });
+                    }
+
                     results.push({
                         tag: el.tagName.toLowerCase(),
                         id: el.id || '',
@@ -268,6 +277,7 @@ class PortalSnapshotTool(Tool):
                         role: el.getAttribute('role') || el.tagName.toLowerCase(),
                         label: label.replace(/\\s+/g, ' ').trim(),
                         value: el.value !== undefined ? el.value : '',
+                        options: options,
                         checked: el.checked || false,
                         disabled: el.disabled || false,
                     });
@@ -287,6 +297,7 @@ class PortalSnapshotTool(Tool):
                 "role": el["role"],
                 "label": el["label"][:120],  # trim long labels
                 "value": str(el["value"])[:100],
+                "options": el.get("options", []),
                 "checked": el["checked"],
                 "disabled": el["disabled"],
             }
@@ -359,18 +370,34 @@ class PortalActTool(Tool):
 
         page = mgr.get_page(state.run_id, state.portal_state.storage_state_path)
 
-        # Locate element using tag, id, name, or accessible label
+        # Locate element using tag, id, role/label, name, or accessible label
         loc = None
         if el_meta.get("id"):
             loc = page.locator(f"#{el_meta['id']}").first
+        elif el_meta.get("role") == "button" or el_meta.get("tag") in ("button", "a"):
+            lbl = el_meta.get("label", "")
+            if lbl:
+                loc = page.get_by_role("button", name=lbl).first
+                if loc.count() == 0:
+                    loc = page.locator(f"button:has-text('{lbl}')").first
+                if loc.count() == 0:
+                    loc = page.locator(f"a:has-text('{lbl}')").first
+            if (loc is None or loc.count() == 0) and el_meta.get("name"):
+                val_attr = el_meta.get("value")
+                if val_attr:
+                    loc = page.locator(f"button[name='{el_meta['name']}'][value='{val_attr}']").first
+                else:
+                    loc = page.locator(f"[name='{el_meta['name']}']").first
         elif el_meta.get("name"):
             loc = page.locator(f"[name='{el_meta['name']}']").first
         elif el_meta.get("label"):
             loc = page.get_by_label(el_meta["label"], exact=False).first
 
         if loc is None or loc.count() == 0:
-            # Fallback by tag and order index if needed
-            loc = page.get_by_role(el_meta.get("role", "button"), name=el_meta.get("label", "")).first
+            if el_meta.get("label"):
+                loc = page.get_by_label(el_meta["label"], exact=False).first
+            if (loc is None or loc.count() == 0) and el_meta.get("label"):
+                loc = page.get_by_role(el_meta.get("role", "button"), name=el_meta.get("label", "")).first
 
         if loc.count() == 0:
             raise ToolExecutionError(f"Could not locate element for ref '{ref}' on the live page.")
@@ -382,11 +409,52 @@ class PortalActTool(Tool):
             elif action == "fill":
                 loc.fill(value or "")
             elif action == "select":
-                # For select dropdowns
+                # For select dropdowns, try exact value, then label, then best match from options
+                selected = False
+                val_str = (value or "").strip()
+                opts = el_meta.get("options", [])
+
+                # 1. Direct try with short timeout (1s)
                 try:
-                    loc.select_option(value or "")
+                    loc.select_option(val_str, timeout=1000)
+                    selected = True
                 except Exception:
-                    loc.select_option(label=value or "")
+                    pass
+
+                if not selected:
+                    try:
+                        loc.select_option(label=val_str, timeout=1000)
+                        selected = True
+                    except Exception:
+                        pass
+
+                # 2. Fuzzy match against options list (ignoring placeholder options)
+                valid_opts = [o for o in opts if o.get("value") and "-- select --" not in o.get("text", "").lower()]
+                if not selected and valid_opts:
+                    target_opt = None
+                    for o in valid_opts:
+                        opt_val = o.get("value", "")
+                        opt_txt = o.get("text", "")
+                        if val_str and (val_str.lower() in opt_val.lower() or val_str.lower() in opt_txt.lower() or opt_val.lower() in val_str.lower() or opt_txt.lower() in val_str.lower()):
+                            target_opt = opt_val or opt_txt
+                            break
+                    if not target_opt and valid_opts:
+                        # Fallback to first non-empty option
+                        target_opt = valid_opts[0].get("value") or valid_opts[0].get("text")
+
+                    if target_opt:
+                        try:
+                            loc.select_option(target_opt, timeout=1000)
+                            selected = True
+                        except Exception:
+                            try:
+                                loc.select_option(label=target_opt, timeout=1000)
+                                selected = True
+                            except Exception:
+                                pass
+
+                if not selected:
+                    raise ToolExecutionError(f"Could not select option '{value}' for ref '{ref}'. Available: {[o.get('text') for o in opts]}")
             elif action == "check":
                 loc.check()
             elif action == "press":

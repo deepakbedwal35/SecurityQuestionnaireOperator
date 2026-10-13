@@ -157,6 +157,22 @@ else:
             else:
                 st.caption("No supporting citations available.")
 
+# Portal Evidence Gallery (Screenshots)
+screen_dir = os.path.join("artifacts", current_run_id, "screens")
+screenshots = []
+if os.path.exists(screen_dir):
+    screenshots = [
+        os.path.join(screen_dir, f) for f in sorted(os.listdir(screen_dir)) if f.endswith(".png")
+    ]
+
+if screenshots:
+    st.write("---")
+    st.subheader("📸 Portal Submission Proof & Screenshots", anchor=False)
+    for s_path in screenshots:
+        s_name = os.path.basename(s_path).replace(".png", "").replace("_", " ").title()
+        st.caption(f"Captured: **{s_name}** (`{s_path}`)")
+        st.image(s_path, use_container_width=True)
+
 # Raw Markdown Report Tab
 if report_vm.raw_markdown:
     st.write("---")

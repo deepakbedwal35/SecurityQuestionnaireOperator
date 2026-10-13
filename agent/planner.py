@@ -43,17 +43,37 @@ class Planner:
         chosen_file = state.understood_goal.questionnaire_path if state.understood_goal else "data/inbox/Acme_Security_Questionnaire.xlsx"
         output_file = f"data/output/{state.run_id}_Filled.xlsx" if state.run_id else "data/output/Acme_Security_Questionnaire_Filled.xlsx"
 
+        is_email_source = state.understood_goal and state.understood_goal.source == "email"
+        is_email_delivery = state.understood_goal and state.understood_goal.delivery == "email_reply"
+
         # Baseline standard steps
-        baseline_steps = [
-            PlanStep(
-                id="step-1-find",
-                description="Search inbox folder for questionnaire files",
-                tool_hint="find_inbox_files",
-                postcondition=PostconditionSpec(
-                    kind="file_exists",
-                    params={"path": chosen_file},
-                ),
-            ),
+        baseline_steps = []
+        if is_email_source:
+            baseline_steps.append(
+                PlanStep(
+                    id="step-1-validate-attachment",
+                    description="Validate incoming questionnaire attachment is valid Excel file",
+                    tool_hint=None,
+                    postcondition=PostconditionSpec(
+                        kind="attachment_is_valid_questionnaire",
+                        params={"path": chosen_file},
+                    ),
+                )
+            )
+        else:
+            baseline_steps.append(
+                PlanStep(
+                    id="step-1-find",
+                    description="Search inbox folder for questionnaire files",
+                    tool_hint="find_inbox_files",
+                    postcondition=PostconditionSpec(
+                        kind="file_exists",
+                        params={"path": chosen_file},
+                    ),
+                )
+            )
+
+        baseline_steps.extend([
             PlanStep(
                 id="step-2-parse",
                 description="Parse questionnaire Excel spreadsheet into structured questions",
@@ -99,7 +119,20 @@ class Planner:
                     params={"output_path": output_file},
                 ),
             ),
-        ]
+        ])
+
+        if is_email_delivery:
+            baseline_steps.append(
+                PlanStep(
+                    id="step-7-draft-reply",
+                    description="Draft customer reply email with scrubbed body and attached questionnaire",
+                    tool_hint="draft_reply",
+                    postcondition=PostconditionSpec(
+                        kind="file_exists",
+                        params={"path": output_file},
+                    ),
+                )
+            )
 
         if not replan_reason:
             state.plan = baseline_steps

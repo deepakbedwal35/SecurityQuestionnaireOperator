@@ -1,20 +1,24 @@
 {
   "run_id": "run-api-10",
-  "created_at": "2026-10-13T12:38:47.352006+00:00",
+  "created_at": "2026-10-13T16:30:31.608230+00:00",
   "status": "completed",
   "failure_reason": null,
   "request_text": "Acme questionnaire",
   "understood_goal": {
     "customer": "Acme",
     "questionnaire_path": "data/inbox/Acme_Security_Questionnaire.xlsx",
-    "selection_rationale": "Picked primary current questionnaire.",
+    "selection_rationale": "Selected questionnaire from inbox folder.",
     "portal_url": null,
     "deadline": null,
-    "constraints": [
-      "Do not sign 99.99% uptime guarantee"
-    ],
+    "constraints": [],
     "low_confidence_goal": false,
-    "needs_human_clarification": false
+    "needs_human_clarification": false,
+    "source": "upload",
+    "source_message_id": null,
+    "sender": null,
+    "reply_to_thread": null,
+    "delivery": "download",
+    "email_body": null
   },
   "plan_version": 1,
   "counters": {
@@ -24,7 +28,7 @@
   },
   "artifacts": {
     "filled_xlsx": "data/output/run-api-10_Filled.xlsx",
-    "final_xlsx": "artifacts/run-api-10/final.xlsx"
+    "final_xlsx": "demo/artifacts/run-api-10/final.xlsx"
   },
   "counts": {
     "parsed": 40,
@@ -664,7 +668,7 @@
     {
       "kind": "file_exists",
       "passed": true,
-      "evidence": "File data/inbox/Acme_Security_Questionnaire.xlsx verified on disk (7730 bytes)",
+      "evidence": "File data/inbox/Acme_Security_Questionnaire.xlsx verified on disk (7729 bytes)",
       "detail": null,
       "step_id": "step-1-find"
     },
@@ -704,28 +708,28 @@
       "step_id": "step-6-write-output"
     },
     {
-      "kind": "output_xlsx_complete",
+      "kind": "file_exists",
       "passed": true,
-      "evidence": "Re-opened run-api-10_Filled.xlsx: 40/40 questions populated",
+      "evidence": "File demo/artifacts/run-api-10/final.xlsx verified on disk (8843 bytes)",
       "detail": null,
       "step_id": null
     }
   ],
   "step_log": [
     {
-      "ts": "2026-10-13 12:38:47.366603+00:00",
-      "tool": "understand",
+      "ts": "2026-10-13 16:30:31.619320+00:00",
+      "tool": "intake",
       "input": {
-        "request_text": "Acme questionnaire",
-        "candidate_count": 2
+        "source": "upload",
+        "request_text": "Acme questionnaire"
       },
-      "output_summary": "Understood customer: Acme, Path: data/inbox/Acme_Security_Questionnaire.xlsx, Rationale: Picked primary current questionnaire.",
+      "output_summary": "Understood upload intake for Acme, path: data/inbox/Acme_Security_Questionnaire.xlsx",
       "risk": "READ",
       "duration_ms": 0,
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.371814+00:00",
+      "ts": "2026-10-13 16:30:31.625537+00:00",
       "tool": "find_inbox_files",
       "input": {
         "inbox_dir": "data/inbox"
@@ -736,18 +740,18 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376024+00:00",
+      "ts": "2026-10-13 16:30:31.629634+00:00",
       "tool": "parse_questionnaire",
       "input": {
         "file_path": "data/inbox/Acme_Security_Questionnaire.xlsx"
       },
       "output_summary": "Success: question_count=40 questions=[Question(id='Q-01', text='Does your organization enforce Multi-Factor A",
       "risk": "READ",
-      "duration_ms": 4,
+      "duration_ms": 3,
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376256+00:00",
+      "ts": "2026-10-13 16:30:31.629881+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-01"
@@ -758,7 +762,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376395+00:00",
+      "ts": "2026-10-13 16:30:31.630025+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-02"
@@ -769,7 +773,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376504+00:00",
+      "ts": "2026-10-13 16:30:31.630135+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-03"
@@ -780,7 +784,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376616+00:00",
+      "ts": "2026-10-13 16:30:31.630244+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-04"
@@ -791,7 +795,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376733+00:00",
+      "ts": "2026-10-13 16:30:31.630364+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-05"
@@ -802,7 +806,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376865+00:00",
+      "ts": "2026-10-13 16:30:31.630495+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-06"
@@ -813,7 +817,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.376995+00:00",
+      "ts": "2026-10-13 16:30:31.630626+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-07"
@@ -824,7 +828,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377128+00:00",
+      "ts": "2026-10-13 16:30:31.630760+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-08"
@@ -835,7 +839,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377220+00:00",
+      "ts": "2026-10-13 16:30:31.630851+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-09"
@@ -846,7 +850,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377339+00:00",
+      "ts": "2026-10-13 16:30:31.630968+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-10"
@@ -857,7 +861,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377467+00:00",
+      "ts": "2026-10-13 16:30:31.631097+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-11"
@@ -868,7 +872,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377581+00:00",
+      "ts": "2026-10-13 16:30:31.631214+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-12"
@@ -879,7 +883,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377681+00:00",
+      "ts": "2026-10-13 16:30:31.631316+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-13"
@@ -890,7 +894,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377784+00:00",
+      "ts": "2026-10-13 16:30:31.631419+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-14"
@@ -901,7 +905,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.377898+00:00",
+      "ts": "2026-10-13 16:30:31.631534+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-15"
@@ -912,7 +916,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378063+00:00",
+      "ts": "2026-10-13 16:30:31.631702+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-16"
@@ -923,7 +927,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378166+00:00",
+      "ts": "2026-10-13 16:30:31.631804+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-17"
@@ -934,7 +938,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378287+00:00",
+      "ts": "2026-10-13 16:30:31.631928+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-18"
@@ -945,7 +949,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378398+00:00",
+      "ts": "2026-10-13 16:30:31.632045+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-19"
@@ -956,7 +960,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378507+00:00",
+      "ts": "2026-10-13 16:30:31.632161+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-20"
@@ -967,7 +971,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378623+00:00",
+      "ts": "2026-10-13 16:30:31.632284+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-21"
@@ -978,7 +982,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378743+00:00",
+      "ts": "2026-10-13 16:30:31.632409+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-22"
@@ -989,7 +993,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378857+00:00",
+      "ts": "2026-10-13 16:30:31.632523+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-23"
@@ -1000,7 +1004,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.378972+00:00",
+      "ts": "2026-10-13 16:30:31.632637+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-24"
@@ -1011,7 +1015,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.379096+00:00",
+      "ts": "2026-10-13 16:30:31.632757+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-25"
@@ -1022,7 +1026,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.379228+00:00",
+      "ts": "2026-10-13 16:30:31.632885+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-26"
@@ -1033,7 +1037,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.379358+00:00",
+      "ts": "2026-10-13 16:30:31.633008+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-27"
@@ -1044,7 +1048,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.379507+00:00",
+      "ts": "2026-10-13 16:30:31.633153+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-28"
@@ -1055,7 +1059,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.379679+00:00",
+      "ts": "2026-10-13 16:30:31.633259+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-29"
@@ -1066,7 +1070,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.379829+00:00",
+      "ts": "2026-10-13 16:30:31.633374+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-30"
@@ -1077,7 +1081,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.379981+00:00",
+      "ts": "2026-10-13 16:30:31.633513+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-31"
@@ -1088,7 +1092,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380093+00:00",
+      "ts": "2026-10-13 16:30:31.633621+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-32"
@@ -1099,7 +1103,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380241+00:00",
+      "ts": "2026-10-13 16:30:31.633766+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-33"
@@ -1110,7 +1114,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380277+00:00",
+      "ts": "2026-10-13 16:30:31.633799+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-34"
@@ -1121,7 +1125,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380310+00:00",
+      "ts": "2026-10-13 16:30:31.633830+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-35"
@@ -1132,7 +1136,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380338+00:00",
+      "ts": "2026-10-13 16:30:31.633859+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-36"
@@ -1143,7 +1147,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380521+00:00",
+      "ts": "2026-10-13 16:30:31.634031+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-37"
@@ -1154,7 +1158,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380548+00:00",
+      "ts": "2026-10-13 16:30:31.634056+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-38"
@@ -1165,7 +1169,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380570+00:00",
+      "ts": "2026-10-13 16:30:31.634076+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-39"
@@ -1176,7 +1180,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.380742+00:00",
+      "ts": "2026-10-13 16:30:31.634225+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-40"
@@ -1187,7 +1191,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:47.387728+00:00",
+      "ts": "2026-10-13 16:30:31.640488+00:00",
       "tool": "write_filled_xlsx",
       "input": {
         "source_file": "data/inbox/Acme_Security_Questionnaire.xlsx",
@@ -1195,7 +1199,7 @@
       },
       "output_summary": "Success: output_path='data/output/run-api-10_Filled.xlsx' filled_count=40",
       "risk": "WRITE_LOW",
-      "duration_ms": 6,
+      "duration_ms": 5,
       "error": null
     }
   ]

@@ -210,5 +210,71 @@ streamlit run app/streamlit_app.py
    - All Streamlit pages interact strictly through `OperatorService` methods. No direct SQLite access or LangGraph graph manipulation occurs in UI files.
    - Pure viewmodel data transformations are isolated in `app/viewmodels.py` and covered by comprehensive unit tests.
 
+7. **Mock Customer Portal & Playwright Observe-Act Loop (`portal/` & `agent/portal_loop.py`)**:
+   - Node 18+ Express mock customer portal with session cookie auth, ~40 questions matching Acme requirements, conditional follow-ups (`Q-01a`, `Q-18a`, `Q-21a`), server draft saving, review summary page (`/review`), idempotent final submission -> `/confirmation` with `SUB-xxxxx`, and truth-grounded `/submissions` list.
+   - Built-in fault injection via `PORTAL_FAULTS` and `/__admin/faults` (`session_expiry`, `ui_rename`, `flaky_save`, `duplicate`, `injection_banner`, `slow`).
+   - Browser automation via `PortalBrowserManager` using thread-safe Playwright sync API.
+   - Dynamic observe-act loop (`agent/portal_loop.py`): takes compact accessibility snapshots with stable element references (`e1, e2, ...`), adapts to UI renames, re-authenticates on session expiration mid-run without losing progress, retries flaky saves, detects infinite loops (3 consecutive unchanged page hashes -> escalate), and captures full-page confirmation screenshots.
+   - Guardrails: final `portal_submit` (WRITE_HIGH) requires approved `FINAL_SIGNOFF`, validates sha256 of answers against approved hash, and prevents duplicate submissions.
+   - Independent Verifier inspects `/submissions` via a separate fresh browser context and proves exact answer matches against verified run state.
 
+---
+
+## 5. Running the Mock Customer Portal
+
+To launch the Express customer portal standalone:
+```bash
+# Start portal on default port 4000
+npm --prefix portal install
+PORT=4000 node portal/server.js
+
+# Or start via Python process manager:
+python3 scripts/start_portal.py 4000
+```
+
+Set environment variables in `.env` or current shell:
+```bash
+PORTAL_URL=http://127.0.0.1:4000/questionnaires/acme-sec-2024
+PORTAL_USER=admin@acme.com
+PORTAL_PASS=AcmeSecret2024!
+# Set to 1 to run browser in headed mode:
+PORTAL_HEADED=0
+```
+
+---
+
+## 6. Demo Mode
+
+To run the operator in a fresh, isolated demo environment:
+
+### Step 1: Reset and Seed the Demo Environment
+Run the idempotent `scripts/demo_reset.py` script. It automatically archives any previous `demo/` directory to `demo_archive/<timestamp>/`, creates a clean `demo/` folder hierarchy, copies the starting seed policy files (`demo/seed/policies/`), stages Acme email `.eml` fixtures (`demo/mailbox/inbox/`), sets up `demo/known_customers.json`, and ingests all policies into the demo knowledge base (`demo/kb/`):
+
+```bash
+python scripts/demo_reset.py
+```
+
+### Step 2: Start the Streamlit UI in Demo Mode
+Launch the Streamlit app configured with the demo environment variables:
+
+```bash
+CHECKPOINT_DB=demo/runs.sqlite \
+ARTIFACTS_DIR=demo/artifacts \
+MAILBOX_DIR=demo/mailbox \
+KB_DIR=demo/kb \
+KNOWN_CUSTOMERS_FILE=demo/known_customers.json \
+streamlit run app/streamlit_app.py
+```
+
+### Step 3: Run the CLI in Demo Mode (Optional)
+You can also run requests via the CLI targeting the isolated demo paths:
+
+```bash
+CHECKPOINT_DB=demo/runs.sqlite \
+ARTIFACTS_DIR=demo/artifacts \
+MAILBOX_DIR=demo/mailbox \
+KB_DIR=demo/kb \
+KNOWN_CUSTOMERS_FILE=demo/known_customers.json \
+python -m agent.cli run "Handle email <acme-2024-happy@acme.com> from alice@acme.com"
+```
 

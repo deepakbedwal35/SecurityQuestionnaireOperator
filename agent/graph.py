@@ -64,6 +64,7 @@ def create_agent_graph(
     event_sink: Optional[EventSink] = None,
     checkpointer: Any = None,
     enable_interrupts: Optional[bool] = None,
+    mailbox: Any = None,
 ) -> Any:
     # If enable_interrupts not explicitly specified, enable only when checkpointer is provided
     if enable_interrupts is None:
@@ -72,6 +73,9 @@ def create_agent_graph(
     understand_node = UnderstandNode(llm_client, registry)
     planner_node = Planner(llm_client, registry, retriever)
     executor_node = Executor(registry, llm_client, planner_node)
+
+    from agent.intake import IntakeNode
+    intake_node = IntakeNode(llm_client, registry, mailbox=mailbox)
 
     def node_understand(state: RunState) -> RunState:
         if event_sink:
@@ -87,7 +91,8 @@ def create_agent_graph(
                 event_sink.emit(state.run_id, "run_failed", {"failure_reason": state.failure_reason})
             return state
 
-        understand_node.run(state)
+        # Use unified intake node to handle both email and uploaded questionnaire sources
+        intake_node.run(state)
         if event_sink and state.understood_goal:
             event_sink.emit(state.run_id, "goal_understood", state.understood_goal.model_dump())
         return state
@@ -247,10 +252,24 @@ def create_agent_graph(
         existing_appr_id = existing_ev.payload.get("id") if (existing_ev and existing_ev.payload.get("kind") == ApprovalKind.FINAL_SIGNOFF.value) else None
         appr_id = existing_appr_id or f"appr-final-{uuid.uuid4().hex[:8]}"
 
+        # If delivery is email_reply, draft reply email before interrupt if not already drafted
+        if state.understood_goal and state.understood_goal.delivery == "email_reply":
+            filled_source = state.artifacts.get("filled_xlsx") or (f"data/output/{state.run_id}_Filled.xlsx" if state.run_id else "data/output/Acme_Security_Questionnaire_Filled.xlsx")
+            if "draft_reply" in registry._tools and state.understood_goal.source_message_id and not state.artifacts.get("email_draft_hash"):
+                try:
+                    registry.execute(
+                        "draft_reply",
+                        state,
+                        message_id=state.understood_goal.source_message_id,
+                        attachment_path=filled_source,
+                    )
+                except Exception:
+                    pass
+
         import hashlib
         import json
         current_answers_repr = json.dumps([{"q": a.question_id, "t": a.text} for a in state.answers], sort_keys=True)
-        answers_hash = hashlib.sha256(current_answers_repr.encode("utf-8")).hexdigest()
+        answers_hash = state.artifacts.get("email_draft_hash") or hashlib.sha256(current_answers_repr.encode("utf-8")).hexdigest()
 
         approval_req = ApprovalRequest(
             id=appr_id,
@@ -272,6 +291,13 @@ def create_agent_graph(
             "approval_id": approval_req.id,
             "kind": approval_req.kind.value,
             "reason": approval_req.reason,
+            "email_draft": {
+                "to": state.artifacts.get("email_draft_to"),
+                "subject": state.artifacts.get("email_draft_subject"),
+                "body": state.artifacts.get("email_draft_body"),
+                "attachment": state.artifacts.get("email_draft_attachment"),
+                "draft_hash": state.artifacts.get("email_draft_hash"),
+            } if state.artifacts.get("email_draft_to") else None,
         })
 
         decision_obj: ApprovalDecision
@@ -313,21 +339,37 @@ def create_agent_graph(
 
         # Execute WRITE_HIGH finalize_output tool
         try:
+            from agent.config import get_artifacts_dir
             filled_source = state.artifacts.get("filled_xlsx") or (f"data/output/{state.run_id}_Filled.xlsx" if state.run_id else "data/output/Acme_Security_Questionnaire_Filled.xlsx")
+            final_xlsx_dest = os.path.join(get_artifacts_dir(), state.run_id, "final.xlsx")
             registry.execute(
                 "finalize_output",
                 state,
                 source_file=filled_source,
-                destination_file=f"artifacts/{state.run_id}/final.xlsx",
+                destination_file=final_xlsx_dest,
             )
             if event_sink:
                 event_sink.emit(state.run_id, "tool_called", {
                     "tool": "finalize_output",
-                    "artifact": f"artifacts/{state.run_id}/final.xlsx",
+                    "artifact": final_xlsx_dest,
                 })
+
+            # If email delivery, execute send_reply tool
+            if state.understood_goal and state.understood_goal.delivery == "email_reply" and "send_reply" in registry._tools:
+                registry.execute(
+                    "send_reply",
+                    state,
+                    message_id=state.understood_goal.source_message_id,
+                    attachment_path=final_xlsx_dest,
+                )
+                if event_sink:
+                    event_sink.emit(state.run_id, "tool_called", {
+                        "tool": "send_reply",
+                        "sent_path": state.artifacts.get("sent_email_path"),
+                    })
         except Exception as e:
             state.status = RunStatus.FAILED
-            state.failure_reason = f"finalize_output failed: {e}"
+            state.failure_reason = f"finalize_output or send_reply failed: {e}"
 
         return state
 
@@ -376,13 +418,31 @@ def create_agent_graph(
     def node_verify_final(state: RunState) -> RunState:
         # Final sanity verification of completed status
         if state.status not in (RunStatus.FAILED, RunStatus.ESCALATED, RunStatus.REJECTED_BY_HUMAN):
-            # Check output xlsx complete
-            res = Verifier.verify(state.plan[-1].postcondition, state)
-            if res.passed:
-                state.status = RunStatus.COMPLETED
+            from agent.config import get_artifacts_dir
+            from agent.state import PostconditionSpec
+            # If final.xlsx was produced (e.g. via finalize_output), verify it; otherwise verify last step postcondition
+            final_xlsx_path = os.path.join(get_artifacts_dir(), state.run_id, "final.xlsx")
+            if os.path.exists(final_xlsx_path):
+                res = Verifier.verify(PostconditionSpec(kind="file_exists", params={"path": final_xlsx_path}), state)
             else:
+                res = Verifier.verify(state.plan[-1].postcondition, state)
+
+            if not res.passed:
                 state.status = RunStatus.FAILED
                 state.failure_reason = f"Final verification failed: {res.evidence}"
+                return state
+
+            # If email delivery, verify reply in thread and attachment matches
+            if state.understood_goal and state.understood_goal.delivery == "email_reply":
+                res_thread = Verifier.verify(PostconditionSpec(kind="reply_in_correct_thread", params={}), state)
+                res_att = Verifier.verify(PostconditionSpec(kind="reply_attachment_matches_final", params={"final_xlsx": final_xlsx_path}), state)
+                res_notes = Verifier.verify(PostconditionSpec(kind="no_internal_notes_in_email", params={}), state)
+                if not (res_thread.passed and res_att.passed and res_notes.passed):
+                    state.status = RunStatus.FAILED
+                    state.failure_reason = f"Email delivery verification failed: {res_thread.evidence}; {res_att.evidence}; {res_notes.evidence}"
+                    return state
+
+            state.status = RunStatus.COMPLETED
         return state
 
     def node_report(state: RunState) -> RunState:

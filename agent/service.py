@@ -59,17 +59,27 @@ class OperatorService:
         self,
         db_path: Optional[str] = None,
         feedback_path: Optional[str] = None,
-        policies_dir: str = "data/policies",
+        policies_dir: Optional[str] = None,
+        kb_dir: Optional[str] = None,
         llm_client: Optional[LLMClient] = None,
+        mailbox: Optional[Any] = None,
     ) -> None:
-        self.db_path = db_path or os.environ.get("CHECKPOINT_DB", "data/runs.sqlite")
-        fb_path = feedback_path or os.environ.get("FEEDBACK_STORE", "data/feedback_rules.json")
+        from agent.config import (
+            get_checkpoint_db,
+            get_feedback_store_path,
+            get_kb_dir,
+            get_policies_dir,
+        )
+        self.db_path = db_path or get_checkpoint_db()
+        fb_path = feedback_path or get_feedback_store_path()
         os.makedirs(os.path.dirname(os.path.abspath(self.db_path)), exist_ok=True)
 
         self.event_sink = EventSink(db_path=self.db_path)
         self.feedback_store = FeedbackStore(file_path=fb_path)
-        self.policies_dir = policies_dir
+        self.policies_dir = policies_dir or get_policies_dir()
+        self.kb_dir = kb_dir or get_kb_dir()
         self._llm_client = llm_client
+        self.mailbox = mailbox
 
         # Threading pool & locks per run
         self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
@@ -93,7 +103,7 @@ class OperatorService:
         return GroqLLM()
 
     def _build_registry_and_retriever(self, llm: LLMClient):
-        retriever = KeywordPolicyRetriever(policies_dir=self.policies_dir, feedback_store=self.feedback_store)
+        retriever = KeywordPolicyRetriever(policies_dir=self.policies_dir, feedback_store=self.feedback_store, kb_dir=self.kb_dir)
         registry = ToolRegistry()
         registry.register(FindInboxFilesTool())
         registry.register(ParseQuestionnaireTool())
@@ -109,6 +119,21 @@ class OperatorService:
         registry.register(PortalScreenshotTool())
         registry.register(PortalSubmitTool())
         registry.register(PortalReadConfirmationTool())
+
+        # Email tools
+        from agent.tools.email import (
+            DraftReplyTool,
+            ListEmailsTool,
+            ReadEmailTool,
+            SaveAttachmentTool,
+            SendReplyTool,
+        )
+        registry.register(ListEmailsTool(mailbox=self.mailbox))
+        registry.register(ReadEmailTool(mailbox=self.mailbox))
+        registry.register(SaveAttachmentTool(mailbox=self.mailbox))
+        registry.register(DraftReplyTool(mailbox=self.mailbox))
+        registry.register(SendReplyTool(mailbox=self.mailbox))
+
         return registry, retriever
 
     def _get_compiled_graph(self, conn: sqlite3.Connection, llm: Optional[LLMClient] = None):
@@ -124,14 +149,24 @@ class OperatorService:
             event_sink=self.event_sink,
             checkpointer=saver,
             enable_interrupts=True,
+            mailbox=self.mailbox,
         )
 
-    def start_run(self, request_text: str, run_id: Optional[str] = None) -> RunState:
+    def start_run(self, request_text: str, run_id: Optional[str] = None, artifacts: Optional[Dict[str, str]] = None) -> RunState:
+        # Empty KB guard
+        from agent.kb import kb_status
+        status = kb_status(self.kb_dir)
+        # If data/policies has files, allow them as fallback; otherwise block if both KB and policies are empty
+        has_policies = os.path.exists(self.policies_dir) and len(os.listdir(self.policies_dir)) > 0
+        if status.get("total_documents", 0) == 0 and not has_policies:
+            raise ValidationError("Cannot start run: Knowledge Base is empty. Upload or ingest policy documents first.")
+
         rid = run_id or f"run-{uuid.uuid4().hex[:10]}"
         state = RunState(
             run_id=rid,
             request_text=request_text,
             status=RunStatus.RUNNING,
+            artifacts=artifacts or {},
         )
 
         # Kick off background execution

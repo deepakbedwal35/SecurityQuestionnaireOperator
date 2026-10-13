@@ -1,20 +1,24 @@
 {
   "run_id": "test-independence",
-  "created_at": "2026-10-13T12:38:46.093773+00:00",
+  "created_at": "2026-10-13T16:30:30.550988+00:00",
   "status": "completed",
   "failure_reason": null,
   "request_text": "Acme sent questionnaire",
   "understood_goal": {
     "customer": "Acme",
     "questionnaire_path": "data/inbox/Acme_Security_Questionnaire.xlsx",
-    "selection_rationale": "Picked primary current questionnaire.",
+    "selection_rationale": "Selected questionnaire from inbox folder.",
     "portal_url": null,
     "deadline": null,
-    "constraints": [
-      "Do not sign 99.99% uptime guarantee"
-    ],
+    "constraints": [],
     "low_confidence_goal": false,
-    "needs_human_clarification": false
+    "needs_human_clarification": false,
+    "source": "upload",
+    "source_message_id": null,
+    "sender": null,
+    "reply_to_thread": null,
+    "delivery": "download",
+    "email_body": null
   },
   "plan_version": 1,
   "counters": {
@@ -42,8 +46,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_1",
-          "quote": "1. Access Control & Identity - All production access requires Multi-Factor Authentication (MFA) via FIDO2 WebAuthn hardware keys or TOTP. SM"
+          "chunk_id": "doc-413e151878f6#chunk_1",
+          "quote": "## 1. Access Control & Identity - All production access requires Multi-Factor Authentication (MFA) via FIDO2 WebAuthn hardware keys or TOTP."
         }
       ],
       "confidence": 0.625,
@@ -57,8 +61,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_1",
-          "quote": "1. Access Control & Identity - All production access requires Multi-Factor Authentication (MFA) via FIDO2 WebAuthn hardware keys or TOTP. SM"
+          "chunk_id": "doc-413e151878f6#chunk_1",
+          "quote": "## 1. Access Control & Identity - All production access requires Multi-Factor Authentication (MFA) via FIDO2 WebAuthn hardware keys or TOTP."
         }
       ],
       "confidence": 0.571,
@@ -90,8 +94,8 @@
       "citations": [
         {
           "doc": "Access_Control_Policy.md",
-          "chunk_id": "Access_Control_Policy.md#sec_1",
-          "quote": "1. Principle of Least Privilege - Role-Based Access Control (RBAC) and Just-in-Time (JIT) access are enforced across all production environm"
+          "chunk_id": "doc-733b458cbf21#chunk_1",
+          "quote": "## 1. Principle of Least Privilege - Role-Based Access Control (RBAC) and Just-in-Time (JIT) access are enforced across all production envir"
         }
       ],
       "confidence": 0.5,
@@ -105,8 +109,8 @@
       "citations": [
         {
           "doc": "Access_Control_Policy.md",
-          "chunk_id": "Access_Control_Policy.md#sec_1",
-          "quote": "1. Principle of Least Privilege - Role-Based Access Control (RBAC) and Just-in-Time (JIT) access are enforced across all production environm"
+          "chunk_id": "doc-733b458cbf21#chunk_1",
+          "quote": "## 1. Principle of Least Privilege - Role-Based Access Control (RBAC) and Just-in-Time (JIT) access are enforced across all production envir"
         }
       ],
       "confidence": 0.5,
@@ -120,8 +124,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_2",
-          "quote": "2. Encryption Standards - Data at Rest: Encrypted using AES-256 with AWS KMS customer-managed keys (CMKs) rotated annually. - Data in Transi"
+          "chunk_id": "doc-413e151878f6#chunk_2",
+          "quote": "## 2. Encryption Standards - Data at Rest: Encrypted using AES-256 with AWS KMS customer-managed keys (CMKs) rotated annually. - Data in Tra"
         }
       ],
       "confidence": 0.571,
@@ -135,8 +139,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_2",
-          "quote": "2. Encryption Standards - Data at Rest: Encrypted using AES-256 with AWS KMS customer-managed keys (CMKs) rotated annually. - Data in Transi"
+          "chunk_id": "doc-413e151878f6#chunk_2",
+          "quote": "## 2. Encryption Standards - Data at Rest: Encrypted using AES-256 with AWS KMS customer-managed keys (CMKs) rotated annually. - Data in Tra"
         }
       ],
       "confidence": 0.875,
@@ -150,8 +154,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_2",
-          "quote": "2. Encryption Standards - Data at Rest: Encrypted using AES-256 with AWS KMS customer-managed keys (CMKs) rotated annually. - Data in Transi"
+          "chunk_id": "doc-413e151878f6#chunk_2",
+          "quote": "## 2. Encryption Standards - Data at Rest: Encrypted using AES-256 with AWS KMS customer-managed keys (CMKs) rotated annually. - Data in Tra"
         }
       ],
       "confidence": 0.75,
@@ -165,8 +169,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_3",
-          "quote": "3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-certi"
+          "chunk_id": "doc-413e151878f6#chunk_3",
+          "quote": "## 3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-ce"
         }
       ],
       "confidence": 0.875,
@@ -180,8 +184,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_3",
-          "quote": "3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-certi"
+          "chunk_id": "doc-413e151878f6#chunk_3",
+          "quote": "## 3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-ce"
         }
       ],
       "confidence": 0.25,
@@ -195,8 +199,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_3",
-          "quote": "3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-certi"
+          "chunk_id": "doc-413e151878f6#chunk_3",
+          "quote": "## 3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-ce"
         }
       ],
       "confidence": 0.5,
@@ -210,8 +214,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_3",
-          "quote": "3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-certi"
+          "chunk_id": "doc-413e151878f6#chunk_3",
+          "quote": "## 3. Vulnerability Management & Penetration Testing - Third-party external penetration tests are conducted annually by independent CREST-ce"
         }
       ],
       "confidence": 0.4,
@@ -225,8 +229,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_4",
-          "quote": "4. Employee Training & Background Checks - All employees undergo standard criminal background checks prior to employment. - Security awarene"
+          "chunk_id": "doc-413e151878f6#chunk_4",
+          "quote": "## 4. Employee Training & Background Checks - All employees undergo standard criminal background checks prior to employment. - Security awar"
         }
       ],
       "confidence": 0.714,
@@ -240,8 +244,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_4",
-          "quote": "4. Employee Training & Background Checks - All employees undergo standard criminal background checks prior to employment. - Security awarene"
+          "chunk_id": "doc-413e151878f6#chunk_4",
+          "quote": "## 4. Employee Training & Background Checks - All employees undergo standard criminal background checks prior to employment. - Security awar"
         }
       ],
       "confidence": 0.714,
@@ -255,8 +259,8 @@
       "citations": [
         {
           "doc": "Incident_Response_Plan.md",
-          "chunk_id": "Incident_Response_Plan.md#sec_2",
-          "quote": "2. Customer Notification SLA - In the event of a confirmed security breach involving unauthorized access to Customer Personal Data, Northwin"
+          "chunk_id": "doc-0e5524bd39ef#chunk_2",
+          "quote": "## 2. Customer Notification SLA - In the event of a confirmed security breach involving unauthorized access to Customer Personal Data, North"
         }
       ],
       "confidence": 0.667,
@@ -270,8 +274,8 @@
       "citations": [
         {
           "doc": "Incident_Response_Plan.md",
-          "chunk_id": "Incident_Response_Plan.md#sec_2",
-          "quote": "2. Customer Notification SLA - In the event of a confirmed security breach involving unauthorized access to Customer Personal Data, Northwin"
+          "chunk_id": "doc-0e5524bd39ef#chunk_2",
+          "quote": "## 2. Customer Notification SLA - In the event of a confirmed security breach involving unauthorized access to Customer Personal Data, North"
         }
       ],
       "confidence": 0.667,
@@ -285,7 +289,7 @@
       "citations": [
         {
           "doc": "Incident_Response_Plan.md",
-          "chunk_id": "Incident_Response_Plan.md#sec_0",
+          "chunk_id": "doc-0e5524bd39ef#chunk_0",
           "quote": "# Northwind Systems - Incident Response Plan **Effective Date:** 2024-02-15   **Version:** 2.4   **Owner:** Security Operations Center (SOC)"
         }
       ],
@@ -300,8 +304,8 @@
       "citations": [
         {
           "doc": "Business_Continuity_and_Disaster_Recovery.md",
-          "chunk_id": "Business_Continuity_and_Disaster_Recovery.md#sec_1",
-          "quote": "1. High Availability Architecture - Multi-Region redundancy deployed across AWS us-east-1 and us-west-2 with automated failover. - Recovery "
+          "chunk_id": "doc-ae0ed4861ebc#chunk_1",
+          "quote": "## 1. High Availability Architecture - Multi-Region redundancy deployed across AWS us-east-1 and us-west-2 with automated failover. - Recove"
         }
       ],
       "confidence": 0.667,
@@ -315,8 +319,8 @@
       "citations": [
         {
           "doc": "Business_Continuity_and_Disaster_Recovery.md",
-          "chunk_id": "Business_Continuity_and_Disaster_Recovery.md#sec_1",
-          "quote": "1. High Availability Architecture - Multi-Region redundancy deployed across AWS us-east-1 and us-west-2 with automated failover. - Recovery "
+          "chunk_id": "doc-ae0ed4861ebc#chunk_1",
+          "quote": "## 1. High Availability Architecture - Multi-Region redundancy deployed across AWS us-east-1 and us-west-2 with automated failover. - Recove"
         }
       ],
       "confidence": 0.667,
@@ -330,8 +334,8 @@
       "citations": [
         {
           "doc": "Business_Continuity_and_Disaster_Recovery.md",
-          "chunk_id": "Business_Continuity_and_Disaster_Recovery.md#sec_1",
-          "quote": "1. High Availability Architecture - Multi-Region redundancy deployed across AWS us-east-1 and us-west-2 with automated failover. - Recovery "
+          "chunk_id": "doc-ae0ed4861ebc#chunk_1",
+          "quote": "## 1. High Availability Architecture - Multi-Region redundancy deployed across AWS us-east-1 and us-west-2 with automated failover. - Recove"
         }
       ],
       "confidence": 0.375,
@@ -345,8 +349,8 @@
       "citations": [
         {
           "doc": "Data_Retention_Policy.md",
-          "chunk_id": "Data_Retention_Policy.md#sec_2",
-          "quote": "2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived to e"
+          "chunk_id": "doc-9847e50e5f1d#chunk_2",
+          "quote": "## 2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived t"
         }
       ],
       "confidence": 0.625,
@@ -360,8 +364,8 @@
       "citations": [
         {
           "doc": "Data_Retention_Policy.md",
-          "chunk_id": "Data_Retention_Policy.md#sec_2",
-          "quote": "2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived to e"
+          "chunk_id": "doc-9847e50e5f1d#chunk_2",
+          "quote": "## 2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived t"
         }
       ],
       "confidence": 0.429,
@@ -375,8 +379,8 @@
       "citations": [
         {
           "doc": "Access_Control_Policy.md",
-          "chunk_id": "Access_Control_Policy.md#sec_1",
-          "quote": "1. Principle of Least Privilege - Role-Based Access Control (RBAC) and Just-in-Time (JIT) access are enforced across all production environm"
+          "chunk_id": "doc-733b458cbf21#chunk_1",
+          "quote": "## 1. Principle of Least Privilege - Role-Based Access Control (RBAC) and Just-in-Time (JIT) access are enforced across all production envir"
         }
       ],
       "confidence": 0.571,
@@ -390,7 +394,7 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_0",
+          "chunk_id": "doc-413e151878f6#chunk_0",
           "quote": "# Northwind Systems - Information Security Policy **Effective Date:** 2024-01-01   **Version:** 3.2   **Owner:** CISO Office"
         }
       ],
@@ -405,8 +409,8 @@
       "citations": [
         {
           "doc": "Data_Retention_Policy.md",
-          "chunk_id": "Data_Retention_Policy.md#sec_2",
-          "quote": "2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived to e"
+          "chunk_id": "doc-9847e50e5f1d#chunk_2",
+          "quote": "## 2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived t"
         }
       ],
       "confidence": 0.714,
@@ -420,8 +424,8 @@
       "citations": [
         {
           "doc": "Data_Retention_Policy.md",
-          "chunk_id": "Data_Retention_Policy.md#sec_2",
-          "quote": "2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived to e"
+          "chunk_id": "doc-9847e50e5f1d#chunk_2",
+          "quote": "## 2. Retention Schedules - **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived t"
         }
       ],
       "confidence": 0.75,
@@ -435,8 +439,8 @@
       "citations": [
         {
           "doc": "Security_Questionnaire_SOP.md",
-          "chunk_id": "Security_Questionnaire_SOP.md#sec_1",
-          "quote": "1. Precedence of Information Sources 1. Current Policy Documents with effective date 2024 or later are the primary source of truth. 2. If co"
+          "chunk_id": "doc-aaf13cb490eb#chunk_1",
+          "quote": "## 1. Precedence of Information Sources 1. Current Policy Documents with effective date 2024 or later are the primary source of truth. 2. If"
         }
       ],
       "confidence": 0.5,
@@ -540,8 +544,8 @@
       "citations": [
         {
           "doc": "Security_Questionnaire_SOP.md",
-          "chunk_id": "Security_Questionnaire_SOP.md#sec_2",
-          "quote": "2. Mandatory Escalation Categories (DO NOT AUTO-ANSWER) Any question touching the following categories must be escalated to a human for sign"
+          "chunk_id": "doc-aaf13cb490eb#chunk_2",
+          "quote": "## 2. Mandatory Escalation Categories (DO NOT AUTO-ANSWER) Any question touching the following categories must be escalated to a human for s"
         }
       ],
       "confidence": 0.385,
@@ -573,8 +577,8 @@
       "citations": [
         {
           "doc": "Information_Security_Policy.md",
-          "chunk_id": "Information_Security_Policy.md#sec_1",
-          "quote": "1. Access Control & Identity - All production access requires Multi-Factor Authentication (MFA) via FIDO2 WebAuthn hardware keys or TOTP. SM"
+          "chunk_id": "doc-413e151878f6#chunk_1",
+          "quote": "## 1. Access Control & Identity - All production access requires Multi-Factor Authentication (MFA) via FIDO2 WebAuthn hardware keys or TOTP."
         }
       ],
       "confidence": 0.364,
@@ -609,7 +613,7 @@
     {
       "kind": "file_exists",
       "passed": true,
-      "evidence": "File data/inbox/Acme_Security_Questionnaire.xlsx verified on disk (7730 bytes)",
+      "evidence": "File data/inbox/Acme_Security_Questionnaire.xlsx verified on disk (7729 bytes)",
       "detail": null,
       "step_id": "step-1-find"
     },
@@ -658,19 +662,19 @@
   ],
   "step_log": [
     {
-      "ts": "2026-10-13 12:38:46.098104+00:00",
-      "tool": "understand",
+      "ts": "2026-10-13 16:30:30.551631+00:00",
+      "tool": "intake",
       "input": {
-        "request_text": "Acme sent questionnaire",
-        "candidate_count": 2
+        "source": "upload",
+        "request_text": "Acme sent questionnaire"
       },
-      "output_summary": "Understood customer: Acme, Path: data/inbox/Acme_Security_Questionnaire.xlsx, Rationale: Picked primary current questionnaire.",
+      "output_summary": "Understood upload intake for Acme, path: data/inbox/Acme_Security_Questionnaire.xlsx",
       "risk": "READ",
       "duration_ms": 0,
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.100595+00:00",
+      "ts": "2026-10-13 16:30:30.554454+00:00",
       "tool": "find_inbox_files",
       "input": {
         "inbox_dir": "data/inbox"
@@ -681,18 +685,18 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.110888+00:00",
+      "ts": "2026-10-13 16:30:30.558146+00:00",
       "tool": "parse_questionnaire",
       "input": {
         "file_path": "data/inbox/Acme_Security_Questionnaire.xlsx"
       },
       "output_summary": "Success: question_count=40 questions=[Question(id='Q-01', text='Does your organization enforce Multi-Factor A",
       "risk": "READ",
-      "duration_ms": 9,
+      "duration_ms": 3,
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.111258+00:00",
+      "ts": "2026-10-13 16:30:30.558446+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-01"
@@ -703,7 +707,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.111727+00:00",
+      "ts": "2026-10-13 16:30:30.558593+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-02"
@@ -714,7 +718,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.112289+00:00",
+      "ts": "2026-10-13 16:30:30.558704+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-03"
@@ -725,7 +729,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.112426+00:00",
+      "ts": "2026-10-13 16:30:30.558815+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-04"
@@ -736,7 +740,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.112587+00:00",
+      "ts": "2026-10-13 16:30:30.558938+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-05"
@@ -747,7 +751,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.112735+00:00",
+      "ts": "2026-10-13 16:30:30.559070+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-06"
@@ -758,7 +762,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.112884+00:00",
+      "ts": "2026-10-13 16:30:30.559206+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-07"
@@ -769,7 +773,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113033+00:00",
+      "ts": "2026-10-13 16:30:30.559341+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-08"
@@ -780,7 +784,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113134+00:00",
+      "ts": "2026-10-13 16:30:30.559429+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-09"
@@ -791,7 +795,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113261+00:00",
+      "ts": "2026-10-13 16:30:30.559545+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-10"
@@ -802,7 +806,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113402+00:00",
+      "ts": "2026-10-13 16:30:30.559672+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-11"
@@ -813,7 +817,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113525+00:00",
+      "ts": "2026-10-13 16:30:30.559787+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-12"
@@ -824,7 +828,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113635+00:00",
+      "ts": "2026-10-13 16:30:30.559890+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-13"
@@ -835,7 +839,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113744+00:00",
+      "ts": "2026-10-13 16:30:30.559992+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-14"
@@ -846,7 +850,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.113872+00:00",
+      "ts": "2026-10-13 16:30:30.560104+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-15"
@@ -857,7 +861,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.114050+00:00",
+      "ts": "2026-10-13 16:30:30.560269+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-16"
@@ -868,7 +872,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.114164+00:00",
+      "ts": "2026-10-13 16:30:30.560369+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-17"
@@ -879,7 +883,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.114520+00:00",
+      "ts": "2026-10-13 16:30:30.560490+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-18"
@@ -890,7 +894,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.114730+00:00",
+      "ts": "2026-10-13 16:30:30.560601+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-19"
@@ -901,7 +905,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.114873+00:00",
+      "ts": "2026-10-13 16:30:30.560710+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-20"
@@ -912,7 +916,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.115013+00:00",
+      "ts": "2026-10-13 16:30:30.560828+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-21"
@@ -923,7 +927,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.115149+00:00",
+      "ts": "2026-10-13 16:30:30.560947+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-22"
@@ -934,7 +938,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.115270+00:00",
+      "ts": "2026-10-13 16:30:30.561056+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-23"
@@ -945,7 +949,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.115393+00:00",
+      "ts": "2026-10-13 16:30:30.561168+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-24"
@@ -956,7 +960,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.115550+00:00",
+      "ts": "2026-10-13 16:30:30.561287+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-25"
@@ -967,18 +971,18 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.116990+00:00",
+      "ts": "2026-10-13 16:30:30.561413+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-26"
       },
       "output_summary": "Success: question_id='Q-26' decision=<AnswerDecision.ANSWERED: 'answered'> text='Compliant with standard poli",
       "risk": "WRITE_LOW",
-      "duration_ms": 1,
+      "duration_ms": 0,
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.117667+00:00",
+      "ts": "2026-10-13 16:30:30.561533+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-27"
@@ -989,7 +993,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.117869+00:00",
+      "ts": "2026-10-13 16:30:30.561674+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-28"
@@ -1000,7 +1004,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.117995+00:00",
+      "ts": "2026-10-13 16:30:30.561777+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-29"
@@ -1011,7 +1015,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118122+00:00",
+      "ts": "2026-10-13 16:30:30.561892+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-30"
@@ -1022,7 +1026,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118270+00:00",
+      "ts": "2026-10-13 16:30:30.562038+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-31"
@@ -1033,7 +1037,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118381+00:00",
+      "ts": "2026-10-13 16:30:30.562141+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-32"
@@ -1044,7 +1048,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118529+00:00",
+      "ts": "2026-10-13 16:30:30.562278+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-33"
@@ -1055,7 +1059,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118566+00:00",
+      "ts": "2026-10-13 16:30:30.562309+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-34"
@@ -1066,7 +1070,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118599+00:00",
+      "ts": "2026-10-13 16:30:30.562340+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-35"
@@ -1077,7 +1081,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118629+00:00",
+      "ts": "2026-10-13 16:30:30.562367+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-36"
@@ -1088,7 +1092,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118810+00:00",
+      "ts": "2026-10-13 16:30:30.562532+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-37"
@@ -1099,7 +1103,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118849+00:00",
+      "ts": "2026-10-13 16:30:30.562558+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-38"
@@ -1110,7 +1114,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.118872+00:00",
+      "ts": "2026-10-13 16:30:30.562579+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-39"
@@ -1121,7 +1125,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.119037+00:00",
+      "ts": "2026-10-13 16:30:30.562726+00:00",
       "tool": "process_question",
       "input": {
         "question_id": "Q-40"
@@ -1132,7 +1136,7 @@
       "error": null
     },
     {
-      "ts": "2026-10-13 12:38:46.129977+00:00",
+      "ts": "2026-10-13 16:30:30.569526+00:00",
       "tool": "write_filled_xlsx",
       "input": {
         "source_file": "data/inbox/Acme_Security_Questionnaire.xlsx",
@@ -1140,7 +1144,7 @@
       },
       "output_summary": "Success: output_path='data/output/test-independence_Filled.xlsx' filled_count=40",
       "risk": "WRITE_LOW",
-      "duration_ms": 10,
+      "duration_ms": 6,
       "error": null
     }
   ]

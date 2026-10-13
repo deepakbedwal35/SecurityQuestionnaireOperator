@@ -196,13 +196,13 @@ app.get('/questionnaires/:id', requireAuth, (req, res) => {
   const answers = userDraft.answers || {};
 
   const renderedQuestions = defaultQuestions.map(q => {
-    // If depends on another question, only show if trigger matches
+    let initialDisplay = 'block';
     if (q.depends_on) {
       const parentVal = answers[q.depends_on];
       const parentQ = defaultQuestions.find(it => it.id === q.depends_on);
       const trigger = parentQ ? parentQ.conditional_trigger : 'Yes';
       if (parentVal !== trigger) {
-        return ''; // hidden
+        initialDisplay = 'none';
       }
     }
 
@@ -235,7 +235,7 @@ app.get('/questionnaires/:id', requireAuth, (req, res) => {
     }
 
     return `
-      <div class="question-block" id="block_${q.id}" style="margin-bottom: 1.25rem; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div class="question-block" id="block_${q.id}" style="display: ${initialDisplay}; margin-bottom: 1.25rem; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
         <label for="field_${q.id}" style="display: block; font-weight: 600; margin-bottom: 0.4rem;">
           ${labelText}
         </label>
@@ -279,6 +279,25 @@ app.get('/questionnaires/:id', requireAuth, (req, res) => {
       <button type="submit" name="action" value="review">${reviewLabel}</button>
     </div>
   </form>
+  <script>
+    // Client-side conditional field visibility
+    const conditionals = [
+      { id: 'Q-01a', parent: 'Q-01', trigger: 'Yes' },
+      { id: 'Q-18a', parent: 'Q-18', trigger: 'Yes' },
+      { id: 'Q-21a', parent: 'Q-21', trigger: 'Yes' }
+    ];
+    conditionals.forEach(c => {
+      const parentEl = document.getElementById('field_' + c.parent);
+      const childBlock = document.getElementById('block_' + c.id);
+      if (parentEl && childBlock) {
+        function update() {
+          childBlock.style.display = (parentEl.value === c.trigger) ? 'block' : 'none';
+        }
+        parentEl.addEventListener('change', update);
+        update();
+      }
+    });
+  </script>
 </body>
 </html>
   `);

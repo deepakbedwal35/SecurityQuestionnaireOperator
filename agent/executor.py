@@ -135,6 +135,17 @@ class Executor:
             src = f"data/output/{state.run_id}_Filled.xlsx" if state.run_id else "data/output/Acme_Security_Questionnaire_Filled.xlsx"
             dest = f"artifacts/{state.run_id}/final.xlsx"
             tool_args = {"source_file": src, "destination_file": dest}
+        elif tool_hint == "draft_reply":
+            msg_id = state.understood_goal.source_message_id if state.understood_goal else ""
+            att_path = state.artifacts.get("filled_xlsx") or (f"data/output/{state.run_id}_Filled.xlsx" if state.run_id else "data/output/Acme_Security_Questionnaire_Filled.xlsx")
+            tool_args = {"message_id": msg_id, "attachment_path": att_path}
+        elif tool_hint == "send_reply":
+            # If not yet approved or before interrupt, skip in executor (will be called in final signoff or after approval)
+            if not state.pending_approval or state.pending_approval.status != ApprovalStatus.APPROVED:
+                return True
+            msg_id = state.understood_goal.source_message_id if state.understood_goal else ""
+            att_path = f"artifacts/{state.run_id}/final.xlsx"
+            tool_args = {"message_id": msg_id, "attachment_path": att_path}
 
         return self._invoke_tool_with_retry(tool_hint, tool_args, state)
 

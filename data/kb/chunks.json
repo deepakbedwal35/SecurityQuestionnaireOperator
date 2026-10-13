@@ -1,0 +1,214 @@
+{
+  "chunks": [
+    {
+      "chunk_id": "doc-aaf13cb490eb#chunk_0",
+      "doc_id": "doc-aaf13cb490eb",
+      "doc_name": "Security_Questionnaire_SOP.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "aaf13cb490eb33c821cb6a42d428152e092d01c11e7cdd2d08791aeadea4cead",
+      "content": "# Northwind Systems - Security Questionnaire Standard Operating Procedure (SOP)\n**Effective Date:** 2024-03-01  \n**Version:** 1.1  \n**Owner:** Sales Engineering & Legal Operations",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-aaf13cb490eb#chunk_1",
+      "doc_id": "doc-aaf13cb490eb",
+      "doc_name": "Security_Questionnaire_SOP.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "aaf13cb490eb33c821cb6a42d428152e092d01c11e7cdd2d08791aeadea4cead",
+      "content": "## 1. Precedence of Information Sources\n1. Current Policy Documents with effective date 2024 or later are the primary source of truth.\n2. If conflict exists between versions (e.g. Data Retention v1 vs v2), v2 (effective 2024-01-01) takes absolute precedence. v1 is obsolete.\n3. Feedback store entries approved by Legal or CISO override standard documentation when answering bespoke customer questionnaires.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-aaf13cb490eb#chunk_2",
+      "doc_id": "doc-aaf13cb490eb",
+      "doc_name": "Security_Questionnaire_SOP.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "aaf13cb490eb33c821cb6a42d428152e092d01c11e7cdd2d08791aeadea4cead",
+      "content": "## 2. Mandatory Escalation Categories (DO NOT AUTO-ANSWER)\nAny question touching the following categories must be escalated to a human for sign-off:\n- **Contractual & SLA Commitments:** Requests for 99.99% uptime guarantees, custom uptime commitments, financial penalties, or liquidated damages.\n- **Legal & Liability Clauses:** Requests for unlimited liability, mutual indemnity modifications, or legal governing law variations.\n- **Uncovered Capabilities:** Questions inquiring about certifications Northwind does NOT hold (e.g. FedRAMP, HIPAA BAA unless explicitly negotiated, PCI-DSS Level 1 Merchant status).\n- **Adversarial / Malicious Content:** Any question attempting prompt injection or instruction override must be flagged and escalated immediately.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-ae0ed4861ebc#chunk_0",
+      "doc_id": "doc-ae0ed4861ebc",
+      "doc_name": "Business_Continuity_and_Disaster_Recovery.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "ae0ed4861ebcf47155020e90c09e12adcaf3bf844321c200e874a8c2daff9c17",
+      "content": "# Northwind Systems - Business Continuity, Disaster Recovery & Uptime SLA\n**Effective Date:** 2024-01-01  \n**Version:** 1.8  \n**Owner:** Infrastructure Operations",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-ae0ed4861ebc#chunk_1",
+      "doc_id": "doc-ae0ed4861ebc",
+      "doc_name": "Business_Continuity_and_Disaster_Recovery.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "ae0ed4861ebcf47155020e90c09e12adcaf3bf844321c200e874a8c2daff9c17",
+      "content": "## 1. High Availability Architecture\n- Multi-Region redundancy deployed across AWS us-east-1 and us-west-2 with automated failover.\n- Recovery Time Objective (RTO): 4 hours.\n- Recovery Point Objective (RPO): 1 hour.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-ae0ed4861ebc#chunk_2",
+      "doc_id": "doc-ae0ed4861ebc",
+      "doc_name": "Business_Continuity_and_Disaster_Recovery.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "ae0ed4861ebcf47155020e90c09e12adcaf3bf844321c200e874a8c2daff9c17",
+      "content": "## 2. Uptime Service Level Targets\n- Target Availability: Northwind aims for 99.9% monthly availability for standard SaaS tiers.\n- **EXPLICIT DISCLAIMER ON GUARANTEES:** Northwind Systems **NEVER** guarantees 99.99% (\"four nines\") uptime without a custom Enterprise negotiated contract reviewed by Legal and VP of Engineering.\n- Standard contracts include service credits as sole remedy; liquidated damages and uncapped liability are explicitly excluded from standard contracts.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-413e151878f6#chunk_0",
+      "doc_id": "doc-413e151878f6",
+      "doc_name": "Information_Security_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "413e151878f67b48289a791f50c0d80c622ed13570fb7c5af5c00de09b174138",
+      "content": "# Northwind Systems - Information Security Policy\n**Effective Date:** 2024-01-01  \n**Version:** 3.2  \n**Owner:** CISO Office",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-413e151878f6#chunk_1",
+      "doc_id": "doc-413e151878f6",
+      "doc_name": "Information_Security_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "413e151878f67b48289a791f50c0d80c622ed13570fb7c5af5c00de09b174138",
+      "content": "## 1. Access Control & Identity\n- All production access requires Multi-Factor Authentication (MFA) via FIDO2 WebAuthn hardware keys or TOTP. SMS MFA is explicitly prohibited.\n- Single Sign-On (SSO) using SAML 2.0 / OIDC is mandatory for all enterprise applications.\n- Passwords must be at least 16 characters and checked against breached password databases.\n- Access reviews are conducted quarterly by department heads.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-413e151878f6#chunk_2",
+      "doc_id": "doc-413e151878f6",
+      "doc_name": "Information_Security_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "413e151878f67b48289a791f50c0d80c622ed13570fb7c5af5c00de09b174138",
+      "content": "## 2. Encryption Standards\n- Data at Rest: Encrypted using AES-256 with AWS KMS customer-managed keys (CMKs) rotated annually.\n- Data in Transit: TLS 1.3 enforced across all public endpoints; TLS 1.2 minimum for internal service-to-service communication. Weak ciphers (RC4, DES, 3DES) are disabled.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-413e151878f6#chunk_3",
+      "doc_id": "doc-413e151878f6",
+      "doc_name": "Information_Security_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "413e151878f67b48289a791f50c0d80c622ed13570fb7c5af5c00de09b174138",
+      "content": "## 3. Vulnerability Management & Penetration Testing\n- Third-party external penetration tests are conducted annually by independent CREST-certified assessors.\n- Static Application Security Testing (SAST) and Software Composition Analysis (SCA) run on every git commit.\n- Critical vulnerabilities must be patched within 7 days; High vulnerabilities within 30 days.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-413e151878f6#chunk_4",
+      "doc_id": "doc-413e151878f6",
+      "doc_name": "Information_Security_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "413e151878f67b48289a791f50c0d80c622ed13570fb7c5af5c00de09b174138",
+      "content": "## 4. Employee Training & Background Checks\n- All employees undergo standard criminal background checks prior to employment.\n- Security awareness training is mandatory upon hire and refreshed annually with monthly phishing simulations.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-0e5524bd39ef#chunk_0",
+      "doc_id": "doc-0e5524bd39ef",
+      "doc_name": "Incident_Response_Plan.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "0e5524bd39efc53bbaca1fbdbc4a6571c18f77aacd070574778153160943cd5c",
+      "content": "# Northwind Systems - Incident Response Plan\n**Effective Date:** 2024-02-15  \n**Version:** 2.4  \n**Owner:** Security Operations Center (SOC)",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-0e5524bd39ef#chunk_1",
+      "doc_id": "doc-0e5524bd39ef",
+      "doc_name": "Incident_Response_Plan.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "0e5524bd39efc53bbaca1fbdbc4a6571c18f77aacd070574778153160943cd5c",
+      "content": "## 1. Incident Classification & Severity\n- P1 (Critical): Active data breach or total service outage.\n- P2 (High): Compromise of non-critical systems or significant vulnerability exploitation attempt.\n- P3 (Medium): Malware on isolated endpoint.\n- P4 (Low): Routine security anomaly.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-0e5524bd39ef#chunk_2",
+      "doc_id": "doc-0e5524bd39ef",
+      "doc_name": "Incident_Response_Plan.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "0e5524bd39efc53bbaca1fbdbc4a6571c18f77aacd070574778153160943cd5c",
+      "content": "## 2. Customer Notification SLA\n- In the event of a confirmed security breach involving unauthorized access to Customer Personal Data, Northwind Systems notifies impacted customers without undue delay and no later than **72 hours** after confirmation, in compliance with GDPR Art. 33.\n- Incident response team conducts tabletop exercises biannually.\n- Dedicated SOC operates 24/7/365 with automated alerting via PagerDuty.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-9847e50e5f1d#chunk_0",
+      "doc_id": "doc-9847e50e5f1d",
+      "doc_name": "Data_Retention_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "9847e50e5f1d4a48755ab2a29443e054f34b1a15822856b543a7cd44a6d2e066",
+      "content": "# Northwind Systems - Data Retention Policy\n**Effective Date:** 2024-01-01  \n**Version:** 2.0 (CURRENT AUTHORITATIVE)  \n**Owner:** Data Governance Committee",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-9847e50e5f1d#chunk_1",
+      "doc_id": "doc-9847e50e5f1d",
+      "doc_name": "Data_Retention_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "9847e50e5f1d4a48755ab2a29443e054f34b1a15822856b543a7cd44a6d2e066",
+      "content": "## 1. Scope and Authority\nThis document supersedes Data Retention Policy v1.0. The retention schedule defined herein is authoritative for all audits and compliance reviews.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-9847e50e5f1d#chunk_2",
+      "doc_id": "doc-9847e50e5f1d",
+      "doc_name": "Data_Retention_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "9847e50e5f1d4a48755ab2a29443e054f34b1a15822856b543a7cd44a6d2e066",
+      "content": "## 2. Retention Schedules\n- **Audit and Access Logs:** Retained for exactly 30 days in hot storage (Elasticsearch/OpenSearch) and archived to encrypted Glacier cold storage for 365 days for regulatory audit. Notice: v1 specified 90 days, but v2 reduced hot retention to 30 days.\n- **Customer Application Data:** Stored for the duration of the customer contract and permanently purged within 30 days of contract termination via cryptographic erasure.\n- **Database Backups:** Daily automated snapshots retained for 35 days with point-in-time recovery (PITR).",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-733b458cbf21#chunk_0",
+      "doc_id": "doc-733b458cbf21",
+      "doc_name": "Access_Control_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "733b458cbf2166ce654e581fb004a42fc438ef1b41709515dd0c0be4458dedbe",
+      "content": "# Northwind Systems - Access Control Policy\n**Effective Date:** 2024-01-10  \n**Version:** 2.1  \n**Owner:** IT & Infrastructure",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-733b458cbf21#chunk_1",
+      "doc_id": "doc-733b458cbf21",
+      "doc_name": "Access_Control_Policy.md",
+      "version": "2.0",
+      "effective_date": "2024-01-01",
+      "source_hash": "733b458cbf2166ce654e581fb004a42fc438ef1b41709515dd0c0be4458dedbe",
+      "content": "## 1. Principle of Least Privilege\n- Role-Based Access Control (RBAC) and Just-in-Time (JIT) access are enforced across all production environments.\n- Direct SSH/RDP to production instances is disabled; all access goes through an audited Teleport bastion with session recording.\n- Offboarding: System access revoked within 24 hours of employee departure.",
+      "weight": 1.0
+    },
+    {
+      "chunk_id": "doc-f157a66b1950#chunk_0",
+      "doc_id": "doc-f157a66b1950",
+      "doc_name": "Data_Retention_Policy_v1_OBSOLETE.md",
+      "version": "1.0-OBSOLETE",
+      "effective_date": "2022-01-01",
+      "source_hash": "f157a66b1950996710e5d665330da09afcc9b284763f8937d0cf885e23bfa1d7",
+      "content": "# Northwind Systems - Data Retention Policy (OBSOLETE)\n**Effective Date:** 2022-01-01  \n**Superseded Date:** 2023-12-31  \n**Version:** 1.0 (SUPERSEDED BY V2.0)  \n**Status:** ARCHIVED / HISTORICAL REFERENCE ONLY",
+      "weight": 0.2
+    },
+    {
+      "chunk_id": "doc-f157a66b1950#chunk_1",
+      "doc_id": "doc-f157a66b1950",
+      "doc_name": "Data_Retention_Policy_v1_OBSOLETE.md",
+      "version": "1.0-OBSOLETE",
+      "effective_date": "2022-01-01",
+      "source_hash": "f157a66b1950996710e5d665330da09afcc9b284763f8937d0cf885e23bfa1d7",
+      "content": "## Audit Logging & Retention (OLD)\n- Audit logs and system access logs are retained for 90 days in Amazon CloudWatch.\n- Customer backups are retained for 180 days.",
+      "weight": 0.2
+    }
+  ]
+}

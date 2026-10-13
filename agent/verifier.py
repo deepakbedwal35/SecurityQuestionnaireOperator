@@ -188,7 +188,8 @@ class Verifier:
 
     @staticmethod
     def _verify_final_artifact_signed_off(params: Dict[str, Any], state: RunState) -> PostconditionResult:
-        final_path = params.get("path") or state.artifacts.get("final_xlsx") or f"artifacts/{state.run_id}/final.xlsx"
+        from agent.config import get_artifacts_dir
+        final_path = params.get("path") or state.artifacts.get("final_xlsx") or os.path.join(get_artifacts_dir(), state.run_id, "final.xlsx")
         if not os.path.exists(final_path):
             return PostconditionResult(
                 kind="final_artifact_signed_off",
@@ -247,9 +248,9 @@ class Verifier:
                 evidence="Cannot verify portal answers: no submission_id in state.",
             )
 
-        from playwright.sync_api import sync_playwright
-        mismatches = []
-        try:
+        import concurrent.futures
+        def _fetch_portal_answers():
+            from playwright.sync_api import sync_playwright
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
                 ctx = browser.new_context()
@@ -272,23 +273,32 @@ class Verifier:
                 sub_card = page.locator(f".submission-card:has-text('{sub_id}')")
                 if sub_card.count() == 0:
                     browser.close()
-                    return PostconditionResult(
-                        kind="portal_answers_match_state",
-                        passed=False,
-                        evidence=f"Submission '{sub_id}' not found on portal /submissions page.",
-                    )
+                    return None
 
                 # Extract stored answers table
                 rows = sub_card.locator("table tbody tr").all()
-                stored_answers = {}
+                stored = {}
                 for r in rows:
                     cols = r.locator("td").all()
                     if len(cols) >= 2:
-                        qid = cols[0].text_content().strip()
-                        ans = cols[1].text_content().strip()
-                        stored_answers[qid] = ans
+                        q = cols[0].text_content().strip()
+                        a = cols[1].text_content().strip()
+                        stored[q] = a
 
                 browser.close()
+                return stored
+
+        mismatches = []
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                stored_answers = pool.submit(_fetch_portal_answers).result(timeout=15.0)
+
+            if stored_answers is None:
+                return PostconditionResult(
+                    kind="portal_answers_match_state",
+                    passed=False,
+                    evidence=f"Submission '{sub_id}' not found on portal /submissions page.",
+                )
 
             # Compare against state answers
             state_answers = {a.question_id: a.text for a in state.answers if a.decision.value == "answered"}
@@ -326,8 +336,9 @@ class Verifier:
         base_portal = "/".join(portal_env.split("/")[:3]) if "://" in portal_env else portal_env
         portal_url = params.get("portal_url") or base_portal
         qid = params.get("questionnaire_id") or "acme-sec-2024"
-        from playwright.sync_api import sync_playwright
-        try:
+        import concurrent.futures
+        def _fetch_submission_count():
+            from playwright.sync_api import sync_playwright
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
                 ctx = browser.new_context()
@@ -342,8 +353,13 @@ class Verifier:
                 page.goto(f"{portal_url}/submissions")
 
                 cards = page.locator(f".submission-card:has-text('{qid}')").all()
-                count = len(cards)
+                c = len(cards)
                 browser.close()
+                return c
+
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                count = pool.submit(_fetch_submission_count).result(timeout=15.0)
 
             if count > 1:
                 return PostconditionResult(
@@ -383,5 +399,238 @@ class Verifier:
             kind="portal_screenshots_present",
             passed=True,
             evidence=f"Found {len(screens)} portal screenshots including confirmation proof.",
+        )
+
+    @staticmethod
+    def _verify_attachment_is_valid_questionnaire(params: Dict[str, Any], state: RunState) -> PostconditionResult:
+        """
+        Validates that saved questionnaire attachment is a real non-empty Excel workbook with >= 1 questions.
+        """
+        path = params.get("path") or state.artifacts.get("saved_questionnaire")
+        if not path or not os.path.exists(path):
+            return PostconditionResult(
+                kind="attachment_is_valid_questionnaire",
+                passed=False,
+                evidence=f"Attachment file not found: {path}",
+            )
+        try:
+            wb = openpyxl.load_workbook(path, read_only=True)
+            ws = wb.active
+            rows = list(ws.iter_rows(values_only=True))
+            wb.close()
+            if len(rows) < 2:
+                return PostconditionResult(
+                    kind="attachment_is_valid_questionnaire",
+                    passed=False,
+                    evidence=f"Attachment workbook has insufficient rows ({len(rows)}).",
+                )
+            return PostconditionResult(
+                kind="attachment_is_valid_questionnaire",
+                passed=True,
+                evidence=f"Attachment verified: valid workbook with {len(rows)} rows ({os.path.basename(path)}).",
+            )
+        except Exception as e:
+            return PostconditionResult(
+                kind="attachment_is_valid_questionnaire",
+                passed=False,
+                evidence=f"Failed to read workbook: {e}",
+            )
+
+    @staticmethod
+    def _verify_reply_in_correct_thread(params: Dict[str, Any], state: RunState) -> PostconditionResult:
+        """
+        Independently reads sent EML file and verifies In-Reply-To header matches original message ID.
+        """
+        import email
+        from email import policy
+        sent_path = params.get("sent_path") or state.artifacts.get("sent_email_path")
+        if not sent_path or not os.path.exists(sent_path):
+            return PostconditionResult(
+                kind="reply_in_correct_thread",
+                passed=False,
+                evidence="Sent email artifact not found on disk.",
+            )
+        try:
+            with open(sent_path, "rb") as f:
+                msg = email.message_from_bytes(f.read(), policy=policy.default)
+            in_reply_to = (msg.get("In-Reply-To") or "").strip("<>").strip()
+            orig_msg_id = (state.understood_goal.source_message_id if state.understood_goal else "").strip("<>").strip()
+
+            if not in_reply_to or (orig_msg_id and in_reply_to != orig_msg_id):
+                return PostconditionResult(
+                    kind="reply_in_correct_thread",
+                    passed=False,
+                    evidence=f"In-Reply-To ('{in_reply_to}') does not match original Message-ID ('{orig_msg_id}').",
+                )
+            return PostconditionResult(
+                kind="reply_in_correct_thread",
+                passed=True,
+                evidence=f"Verified reply is in thread: In-Reply-To matches <{in_reply_to}>.",
+            )
+        except Exception as e:
+            return PostconditionResult(
+                kind="reply_in_correct_thread",
+                passed=False,
+                evidence=f"Failed to inspect sent email: {e}",
+            )
+
+    @staticmethod
+    def _verify_reply_attachment_matches_final(params: Dict[str, Any], state: RunState) -> PostconditionResult:
+        """
+        Independently opens sent EML from data/mailbox/sent/, extracts attachment, computes SHA-256,
+        and matches against artifacts/<run_id>/final.xlsx. Never trusts state attributes.
+        """
+        import email
+        from email import policy
+        import hashlib
+        from agent.config import get_artifacts_dir
+        sent_path = params.get("sent_path") or state.artifacts.get("sent_email_path")
+        final_xlsx = params.get("final_xlsx") or os.path.join(get_artifacts_dir(), state.run_id, "final.xlsx")
+
+        if not sent_path or not os.path.exists(sent_path):
+            return PostconditionResult(
+                kind="reply_attachment_matches_final",
+                passed=False,
+                evidence="Sent email file does not exist on disk.",
+            )
+        if not os.path.exists(final_xlsx):
+            return PostconditionResult(
+                kind="reply_attachment_matches_final",
+                passed=False,
+                evidence=f"Final reference xlsx does not exist: {final_xlsx}",
+            )
+
+        with open(final_xlsx, "rb") as f:
+            final_bytes = f.read()
+        final_hash = hashlib.sha256(final_bytes).hexdigest()
+
+        # Parse sent eml directly
+        try:
+            with open(sent_path, "rb") as f:
+                msg = email.message_from_bytes(f.read(), policy=policy.default)
+
+            matched_att_hash = None
+            for part in msg.walk():
+                fn = part.get_filename()
+                if fn and fn.endswith(".xlsx"):
+                    att_data = part.get_payload(decode=True) or b""
+                    matched_att_hash = hashlib.sha256(att_data).hexdigest()
+                    break
+
+            if not matched_att_hash:
+                return PostconditionResult(
+                    kind="reply_attachment_matches_final",
+                    passed=False,
+                    evidence="No .xlsx attachment found inside sent .eml file.",
+                )
+
+            if matched_att_hash != final_hash:
+                return PostconditionResult(
+                    kind="reply_attachment_matches_final",
+                    passed=False,
+                    evidence=f"Sent attachment SHA-256 ({matched_att_hash}) does not match final.xlsx ({final_hash}).",
+                )
+
+            return PostconditionResult(
+                kind="reply_attachment_matches_final",
+                passed=True,
+                evidence=f"Verified: sent attachment bytes exactly match final.xlsx (sha256: {final_hash[:16]}...).",
+            )
+        except Exception as e:
+            return PostconditionResult(
+                kind="reply_attachment_matches_final",
+                passed=False,
+                evidence=f"Error inspecting sent email: {e}",
+            )
+
+    @staticmethod
+    def _verify_no_internal_notes_in_email(params: Dict[str, Any], state: RunState) -> PostconditionResult:
+        """
+        Scans sent EML body to guarantee no internal reasoning, confidence scores, flags, or policy filenames leaked.
+        """
+        import email
+        from email import policy
+        sent_path = params.get("sent_path") or state.artifacts.get("sent_email_path")
+        if not sent_path or not os.path.exists(sent_path):
+            return PostconditionResult(
+                kind="no_internal_notes_in_email",
+                passed=False,
+                evidence="Sent email artifact not found on disk.",
+            )
+        try:
+            with open(sent_path, "rb") as f:
+                msg = email.message_from_bytes(f.read(), policy=policy.default)
+
+            body_text = ""
+            if msg.is_multipart():
+                for part in msg.walk():
+                    if part.get_content_type() == "text/plain":
+                        txt = part.get_content()
+                        if isinstance(txt, str):
+                            body_text += txt
+            else:
+                txt = msg.get_content()
+                if isinstance(txt, str):
+                    body_text = txt
+
+            forbidden = [
+                "confidence:",
+                "confidence score",
+                "prompt injection",
+                "injection flag",
+                "Information_Security_Policy.md",
+                "Data_Retention_Policy.md",
+                "Incident_Response_Plan.md",
+                "Access_Control_Policy.md",
+                "feedback_rules.json",
+                "PolicyEngine",
+                "RiskLevel",
+                "WRITE_HIGH",
+            ]
+            leaks = [word for word in forbidden if word.lower() in body_text.lower()]
+            if leaks:
+                return PostconditionResult(
+                    kind="no_internal_notes_in_email",
+                    passed=False,
+                    evidence=f"Internal data leaked in email body: {leaks}",
+                )
+
+            return PostconditionResult(
+                kind="no_internal_notes_in_email",
+                passed=True,
+                evidence="Verified: No internal notes, confidence scores, or policy filenames found in customer email.",
+            )
+        except Exception as e:
+            return PostconditionResult(
+                kind="no_internal_notes_in_email",
+                passed=False,
+                evidence=f"Failed to inspect email body: {e}",
+            )
+
+    @staticmethod
+    def _verify_no_duplicate_send(params: Dict[str, Any], state: RunState) -> PostconditionResult:
+        """
+        Verifies that only a single sent email exists for this run ID in data/mailbox/sent/.
+        """
+        import glob
+        sent_dir = params.get("sent_dir", "data/mailbox/sent")
+        run_id = state.run_id
+        matching = glob.glob(os.path.join(sent_dir, f"{run_id}*.eml"))
+        if len(matching) > 1:
+            return PostconditionResult(
+                kind="no_duplicate_send",
+                passed=False,
+                evidence=f"Duplicate sent emails found for run {run_id} ({len(matching)} files).",
+            )
+        if len(matching) == 0:
+            return PostconditionResult(
+                kind="no_duplicate_send",
+                passed=False,
+                evidence=f"No sent email found for run {run_id}.",
+            )
+        return PostconditionResult(
+            kind="no_duplicate_send",
+            passed=True,
+            evidence=f"Verified: Exactly one sent email exists for run {run_id}.",
         )
 

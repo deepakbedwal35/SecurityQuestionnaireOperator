@@ -178,6 +178,12 @@ class UnderstoodGoal(BaseModel):
     constraints: List[str] = Field(default_factory=list)
     low_confidence_goal: bool = False
     needs_human_clarification: bool = False
+    source: str = "upload"  # "email" | "upload"
+    source_message_id: Optional[str] = None
+    sender: Optional[str] = None
+    reply_to_thread: Optional[str] = None
+    delivery: str = "download"  # "email_reply" | "download"
+    email_body: Optional[str] = None
 
 
 class PortalState(BaseModel):

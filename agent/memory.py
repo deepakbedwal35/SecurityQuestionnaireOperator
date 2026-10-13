@@ -24,8 +24,9 @@ class FeedbackRule(BaseModel):
 
 
 class FeedbackStore:
-    def __init__(self, file_path: str = "data/feedback_rules.json") -> None:
-        self.file_path = file_path
+    def __init__(self, file_path: Optional[str] = None) -> None:
+        from agent.config import get_feedback_store_path
+        self.file_path = file_path or get_feedback_store_path()
         self._ensure_store()
 
     def _ensure_store(self) -> None:

@@ -1,1 +1,1 @@
-{"cookies": [{"name": "portal_session", "value": "5c8694635e8a3be293f59ea9408309c12ae47b756cb5e5a6", "domain": "127.0.0.1", "path": "/", "expires": -1, "httpOnly": true, "secure": false, "sameSite": "Lax"}], "origins": []}
+{"cookies": [{"name": "portal_session", "value": "c2842dc2dcf1a481afcffa97f02d4d766c55df0ad3f657ef", "domain": "127.0.0.1", "path": "/", "expires": -1, "httpOnly": true, "secure": false, "sameSite": "Lax"}], "origins": []}

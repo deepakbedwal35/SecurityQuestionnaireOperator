@@ -95,12 +95,15 @@ def _create_approved_run_state(run_id: str, questions_count: int = 5) -> RunStat
     with open(portal_data_path, "r", encoding="utf-8") as f:
         q_seeds = json.load(f)
 
-    for q in q_seeds[:questions_count]:
+    for q in q_seeds:
+        if q["id"] in ("Q-01a", "Q-18a", "Q-21a"):
+            continue  # conditionals
+        val = "Yes" if q["type"] == "yes_no" else ((q.get("options", ["SAML 2.0 / OIDC"])[0]) if q["type"] == "dropdown" else "Fully compliant with SOC2 controls.")
         state.answers.append(
             Answer(
                 question_id=q["id"],
                 decision=AnswerDecision.ANSWERED,
-                text="Yes" if q["type"] == "yes_no" else ("FIDO2" if q["type"] == "dropdown" else "Fully compliant with SOC2 controls."),
+                text=val,
                 confidence=1.0,
             )
         )
@@ -168,6 +171,17 @@ def test_2_conditional_followups(portal_server):
     assert res.submission_id is not None
 
     # Verify that unmatched conditional causes human escalation
+    # Reset portal submissions via admin endpoint so questionnaire can be filled afresh
+    import urllib.request
+    reset_req = urllib.request.Request(
+        f"{base_url}/__admin/reset",
+        data=b"{}",
+        headers={"Content-Type": "application/json", "x-admin-token": "portal-test-admin-token"},
+        method="POST",
+    )
+    with urllib.request.urlopen(reset_req) as resp:
+        assert resp.status == 200
+
     # Temporarily override _match_conditional_question to simulate an ungrounded unknown conditional
     state_unmatched = _create_approved_run_state("run-portal-unmatched")
     loop_unmatched = PortalOperatorLoop(llm=FakeLLM(), portal_url=form_url)
@@ -280,7 +294,7 @@ def test_7_submit_guardrails(portal_server):
     submit_tool = PortalSubmitTool()
 
     # Guardrail 1: Refused without approved FINAL_SIGNOFF
-    state_no_appr = RunState(run_id="run-guard-1", status=RunStatus.RUNNING)
+    state_no_appr = RunState(run_id="run-guard-1", request_text="Guardrail test", status=RunStatus.RUNNING)
     with pytest.raises(ApprovalRequiredError) as exc_info:
         submit_tool.run(state_no_appr)
     assert "requires approved FINAL_SIGNOFF" in str(exc_info.value)
@@ -414,7 +428,7 @@ def test_11_secrets_scrubbed(portal_server):
 
     appr2 = svc.get_pending_approval("run-portal-secrets")
     if appr2 and appr2.kind == ApprovalKind.FINAL_SIGNOFF:
-        dec2 = ApprovalDecision(approval_id=app2.id, final_action=ItemAction.APPROVE, decided_by="admin")
+        dec2 = ApprovalDecision(approval_id=appr2.id, final_action=ItemAction.APPROVE, decided_by="admin")
         svc.resolve_approval("run-portal-secrets", appr2.id, dec2)
         svc._futures["run-portal-secrets"].result(timeout=20)
 

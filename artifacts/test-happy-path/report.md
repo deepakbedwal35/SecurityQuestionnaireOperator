@@ -14,7 +14,7 @@
 ## Machine Verification Results
 | Step | Postcondition Kind | Status | Evidence |
 | --- | --- | --- | --- |
-| `step-1-find` | `file_exists` | **PASSED** | File data/inbox/Acme_Security_Questionnaire.xlsx verified on disk (7730 bytes) |
+| `step-1-find` | `file_exists` | **PASSED** | File data/inbox/Acme_Security_Questionnaire.xlsx verified on disk (7729 bytes) |
 | `step-2-parse` | `questions_parsed` | **PASSED** | Found 40 parsed questions (min required: 1) |
 | `step-3-process-questions` | `all_questions_have_decision` | **PASSED** | 40/40 questions have a valid decision |
 | `step-4-verify-commitments` | `no_commitment_question_answered` | **PASSED** | Zero commitment questions answered auto-compliantly |

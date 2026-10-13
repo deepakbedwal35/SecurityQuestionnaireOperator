@@ -147,6 +147,14 @@ class PortalOperatorLoop:
                     self.open_tool.run(state, url=self.portal_url)
                 continue
 
+            # Case B.2: On Error or Save endpoint page (500 or network glitch) -> RETRY BACKOFF
+            if "/save" in current_url or len(elements) == 0:
+                retries += 1
+                sink.emit(state.run_id, "portal_action", {"action": "retry_after_error", "retries": retries, "url": current_url})
+                time.sleep(1.0)
+                self.open_tool.run(state, url=self.portal_url)
+                continue
+
             # Case C: Check for duplicate submission rejection alert
             for al in alerts:
                 if "duplicate submission" in al.lower():

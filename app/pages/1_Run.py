@@ -35,14 +35,35 @@ with st.container(border=True):
     with col_btn:
         start_clicked = st.button("▶️ Start Run", type="primary", use_container_width=True)
 
+    uploaded_q = st.file_uploader(
+        "Or upload a questionnaire directly (.xlsx)",
+        type=["xlsx"],
+        help="Upload customer .xlsx file directly for processing.",
+    )
+
     if start_clicked:
-        if not req_text.strip():
-            st.error("Please enter a request prompt.")
+        prompt = req_text.strip()
+        uploaded_artifacts = {}
+        if uploaded_q is not None:
+            import os
+            os.makedirs("data/inbox", exist_ok=True)
+            saved_upload_path = os.path.join("data/inbox", uploaded_q.name)
+            with open(saved_upload_path, "wb") as f:
+                f.write(uploaded_q.read())
+            uploaded_artifacts["uploaded_file"] = saved_upload_path
+            if not prompt:
+                prompt = f"Uploaded: {uploaded_q.name}"
+
+        if not prompt:
+            st.error("Please enter a request prompt or upload a questionnaire.")
         else:
             with st.spinner("Starting operator run in background..."):
-                new_state = svc.start_run(req_text.strip())
-                st.session_state.current_run_id = new_state.run_id
-                st.rerun()
+                try:
+                    new_state = svc.start_run(prompt, artifacts=uploaded_artifacts)
+                    st.session_state.current_run_id = new_state.run_id
+                    st.rerun()
+                except Exception as ex:
+                    st.error(f"❌ {ex}")
 
 current_run_id = st.session_state.get("current_run_id")
 
